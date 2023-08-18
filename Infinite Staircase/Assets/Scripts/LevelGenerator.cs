@@ -5,6 +5,8 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 35.0f;
+    [HideInInspector] public const float PLATFORM_X_SPACING = 3.0f;
+    [HideInInspector] public const float PLATFORM_Y_SPACING = 1.5f;
 
     [SerializeField] private Player player;
 
@@ -76,13 +78,13 @@ public class LevelGenerator : MonoBehaviour
 
         // modifies the position of the spawned platform to left/right and then up
         if (Random.Range(0, 2) == 0){
-            newPosition.x -= 3;
+            newPosition.x -= PLATFORM_X_SPACING;
         }
         else{
-            newPosition.x += 3;
+            newPosition.x += PLATFORM_X_SPACING;
         }
 
-        newPosition.y += 1.5f;
+        newPosition.y += PLATFORM_Y_SPACING;
         return newPosition;
     }
 }
