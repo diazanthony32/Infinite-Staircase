@@ -6,19 +6,21 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     private const float PLAYER_GRACE_PERIOD = 5.0f;
-    [HideInInspector] public const float PLATFORM_X_SPACING = 3.0f;
-    [HideInInspector] public const float PLATFORM_Y_SPACING = 1.5f;
 
-    public GameObject playerSprite;
-    private Rigidbody2D playerRB;
+    [HideInInspector] public GameObject playerSprite;
+    [HideInInspector] public Rigidbody2D playerRB;
 
     private bool isPlayerFacingLeft = true;
     private float gracePeriodTimer = float.PositiveInfinity;
+    public bool isOnPlatform = true;
+
+    private GameManager gameManager;
 
     // Start is called before the first frame update
     void Awake()
     {
         playerRB = GetComponent<Rigidbody2D>();
+        gameManager = FindAnyObjectByType<GameManager>();
     }
 
     // Update is called once per frame
@@ -60,24 +62,30 @@ public class Player : MonoBehaviour
         Vector3 newPosition = transform.position;
         if (isPlayerFacingLeft)
         {
-            newPosition.x -= PLATFORM_X_SPACING;
+            newPosition.x -= gameManager.PLATFORM_X_SPACING;
         }
         else
         {
-            newPosition.x += PLATFORM_X_SPACING;
+            newPosition.x += gameManager.PLATFORM_X_SPACING;
         }
-        newPosition.y += PLATFORM_Y_SPACING;
+        newPosition.y += gameManager.PLATFORM_Y_SPACING;
 
         transform.position = newPosition;
 
-        if (!IsOnPlatform()){
-            playerRB.bodyType = RigidbodyType2D.Dynamic;
+
+        if (!IsOnPlatform())
+        {
+            isOnPlatform = false;
+        }
+        else {
+            // score goes up
+            gameManager.currentScore += 1;
         }
     }
 
     private bool IsOnPlatform()
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 2.0f);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 1.0f);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Platform"))

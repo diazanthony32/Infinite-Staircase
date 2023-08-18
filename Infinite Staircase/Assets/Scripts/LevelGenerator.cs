@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 35.0f;
-    [HideInInspector] public const float PLATFORM_X_SPACING = 3.0f;
-    [HideInInspector] public const float PLATFORM_Y_SPACING = 1.5f;
+    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 25.0f;
 
     [SerializeField] private Player player;
 
@@ -18,9 +16,13 @@ public class LevelGenerator : MonoBehaviour
     private int platformCount = 35;
     private GameObject lastPlatform;
 
+    private GameManager gameManager;
+
     // Start is called before the first frame update
     void Awake()
     {
+        gameManager = FindAnyObjectByType<GameManager>();
+
         // makes the starting platform the last known platform position and adds it to the active platforms list
         lastPlatform = levelStart;
         activePlatforms.Add(levelStart);
@@ -39,6 +41,7 @@ public class LevelGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // if the player position is less than the desired spacing, move the first platform up
         if (Vector3.Distance(player.transform.position, lastPlatform.transform.position) < PLAYER_DISTANCE_SPAWN_LEVEL_PART){
             RearragePlatforms();
         }
@@ -78,13 +81,13 @@ public class LevelGenerator : MonoBehaviour
 
         // modifies the position of the spawned platform to left/right and then up
         if (Random.Range(0, 2) == 0){
-            newPosition.x -= PLATFORM_X_SPACING;
+            newPosition.x -= gameManager.PLATFORM_X_SPACING;
         }
         else{
-            newPosition.x += PLATFORM_X_SPACING;
+            newPosition.x += gameManager.PLATFORM_X_SPACING;
         }
 
-        newPosition.y += PLATFORM_Y_SPACING;
+        newPosition.y += gameManager.PLATFORM_Y_SPACING;
         return newPosition;
     }
 }
