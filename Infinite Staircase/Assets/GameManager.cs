@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -38,6 +39,10 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
 
+    public Slider gracePeriodSlider;
+
+    [Space(10)]
+
     public Player player;
 
     // Start is called before the first frame update
@@ -50,6 +55,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         currentScoreText.text = currentScore.ToString();
+        gracePeriodSlider.value = (player.gracePeriodTimer / player.PLAYER_GRACE_PERIOD);
 
         if (player.isOnPlatform == false)
         {

@@ -5,14 +5,14 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private const float PLAYER_GRACE_PERIOD = 5.0f;
+    [HideInInspector] public float PLAYER_GRACE_PERIOD = 5.0f;
 
     [HideInInspector] public GameObject playerSprite;
     [HideInInspector] public Rigidbody2D playerRB;
 
     private bool isPlayerFacingLeft = true;
-    private float gracePeriodTimer = float.PositiveInfinity;
-    public bool isOnPlatform = true;
+    [HideInInspector] public float gracePeriodTimer = float.PositiveInfinity;
+    [HideInInspector] public bool isOnPlatform = true;
 
     private GameManager gameManager;
 
@@ -26,7 +26,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        gracePeriodTimer -= Time.deltaTime;
+        if (gracePeriodTimer < 0.0f || !isOnPlatform)
+            isOnPlatform = false;
+        else
+            gracePeriodTimer -= Time.deltaTime;
     }
 
 
@@ -58,6 +61,10 @@ public class Player : MonoBehaviour
 
     public void MovePlayer()
     {
+        // begins the grace period timer
+        if (gracePeriodTimer == float.PositiveInfinity)
+            gracePeriodTimer = PLAYER_GRACE_PERIOD;
+
         // move the player up and in the direction they are facing
         Vector3 newPosition = transform.position;
         if (isPlayerFacingLeft)
@@ -80,6 +87,7 @@ public class Player : MonoBehaviour
         else {
             // score goes up
             gameManager.currentScore += 1;
+            gracePeriodTimer = Mathf.Clamp(gracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.25f), 0, PLAYER_GRACE_PERIOD);
         }
     }
 
