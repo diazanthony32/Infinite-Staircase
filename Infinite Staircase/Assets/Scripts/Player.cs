@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    [HideInInspector] public float PLAYER_GRACE_PERIOD = 5.0f;
+    [HideInInspector] public float PLAYER_GRACE_PERIOD = 3.5f;
 
     [HideInInspector] public GameObject playerSprite;
     [HideInInspector] public Rigidbody2D playerRB;
@@ -61,6 +61,9 @@ public class Player : MonoBehaviour
 
     public void MovePlayer()
     {
+
+        AudioManager.PlaySound("Jump");
+
         // begins the grace period timer
         if (gracePeriodTimer == float.PositiveInfinity)
             gracePeriodTimer = PLAYER_GRACE_PERIOD;
@@ -76,7 +79,7 @@ public class Player : MonoBehaviour
             newPosition.x += gameManager.PLATFORM_X_SPACING;
         }
         newPosition.y += gameManager.PLATFORM_Y_SPACING;
-
+         
         transform.position = newPosition;
 
 
