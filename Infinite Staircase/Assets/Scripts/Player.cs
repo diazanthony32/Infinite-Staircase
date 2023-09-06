@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public GameManager gameManager;
+
+    [Space(10)]
+
     [HideInInspector] public float PLAYER_GRACE_PERIOD = 3.5f;
 
     [HideInInspector] public GameObject playerSprite;
@@ -14,7 +19,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float gracePeriodTimer = float.PositiveInfinity;
     [HideInInspector] public bool isOnPlatform = true;
 
-    private GameManager gameManager;
+    public CinemachineVirtualCamera vCamera;
 
     // Start is called before the first frame update
     void Awake()
@@ -72,13 +77,13 @@ public class Player : MonoBehaviour
         Vector3 newPosition = transform.position;
         if (isPlayerFacingLeft)
         {
-            newPosition.x -= gameManager.PLATFORM_X_SPACING;
+            newPosition.x -= gameManager.levelGenerator.PLATFORM_X_SPACING;
         }
         else
         {
-            newPosition.x += gameManager.PLATFORM_X_SPACING;
+            newPosition.x += gameManager.levelGenerator.PLATFORM_X_SPACING;
         }
-        newPosition.y += gameManager.PLATFORM_Y_SPACING;
+        newPosition.y += gameManager.levelGenerator.PLATFORM_Y_SPACING;
          
         transform.position = newPosition;
 
@@ -86,10 +91,11 @@ public class Player : MonoBehaviour
         if (!IsOnPlatform())
         {
             isOnPlatform = false;
+            vCamera.Follow = null;
         }
         else {
             // score goes up
-            gameManager.currentScore += 1;
+            gameManager.uiManager.currentScore += 1;
             gracePeriodTimer = Mathf.Clamp(gracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.25f), 0, PLAYER_GRACE_PERIOD);
         }
     }

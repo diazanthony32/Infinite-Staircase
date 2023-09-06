@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public GameManager gameManager;
+
+    [Space(10)]
+
     public static AudioSource audioSrc;
     public static AudioClip gameMusic, jumpSound, dieSound;
 
