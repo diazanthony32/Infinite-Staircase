@@ -26,10 +26,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (player.isOnPlatform == false)
-        {
             StartCoroutine(GameOver());
-        }
-
     }
 
     // On player "death", this coroutine gets enabled
@@ -38,9 +35,6 @@ public class GameManager : MonoBehaviour
         // disable player input
         uiManager.inputCanvas.enabled = false;
 
-        yield return new WaitForSeconds(1.5f);
-        player.playerRB.bodyType = RigidbodyType2D.Dynamic;
-
         // checks if the current score is higher than their best score, if so make it the new highest
         if (uiManager.currentScore > uiManager.highScore)
         {
@@ -48,7 +42,8 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("High Score", uiManager.currentScore);
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(3.0f);
+
         uiManager.highScoreText.text = uiManager.highScore.ToString();
         uiManager.finalScoreText.text = uiManager.currentScore.ToString();
         uiManager.gameUICanvas.enabled = false;

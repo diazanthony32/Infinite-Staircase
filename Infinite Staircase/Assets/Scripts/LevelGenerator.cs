@@ -8,10 +8,15 @@ public class LevelGenerator : MonoBehaviour
 
     [Space(10)]
 
-    [HideInInspector] public float PLATFORM_X_SPACING = 2.65f;
-    [HideInInspector] public float PLATFORM_Y_SPACING = 1.15f;
+    [SerializeField] private string seed;
+    [SerializeField] private bool useSeed;
 
-    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 25.0f;
+    public float PLATFORM_X_SIZE { get; private set; } = 1.0f;
+    public float PLATFORM_Y_SIZE { get; private set; } = 0.5f;
+    public float PLATFORM_PADDING { get; private set; } = 0.1f;
+
+    // the smaller the number, the closer the player can be to the top of the staircase without rearranging
+    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 12.5f;
 
     [SerializeField] private GameObject levelStart;
     [SerializeField] private List<GameObject> platformTypes;
@@ -20,9 +25,6 @@ public class LevelGenerator : MonoBehaviour
 
     private int platformCount = 35;
     private GameObject lastPlatform;
-
-    public bool useSeed;
-    public string seed;
 
 
     // Start is called before the first frame update
@@ -122,17 +124,41 @@ public class LevelGenerator : MonoBehaviour
     // rules set to decide the platforms new position
     private Vector3 NewPlatformPosition(Transform platform)
     {
-        Vector3 newPosition = platform.transform.position;
+        int _randNum = Random.Range(1, 101);
+        Vector3 _newPlatformPosition = platform.transform.position;
 
-        // modifies the position of the spawned platform to left/right and then up
-        if (Random.Range(0, 2) == 0){
-            newPosition.x -= PLATFORM_X_SPACING;
-        }
-        else{
-            newPosition.x += PLATFORM_X_SPACING;
+        if (activePlatforms.Count < 2)
+        {
+            if (_randNum <= 50)
+                _newPlatformPosition.x -= (PLATFORM_X_SIZE + PLATFORM_PADDING);
+            else
+                _newPlatformPosition.x += (PLATFORM_X_SIZE + PLATFORM_PADDING);
         }
 
-        newPosition.y += PLATFORM_Y_SPACING;
-        return newPosition;
+        // tries to give a slightly higher priority to keeping stairs going in the same direction
+        // checking if the last platform is to the right of the platform before it
+        else
+        {
+            float _lastPlatPos = lastPlatform.transform.position.x;
+            float _prevPlatPos = activePlatforms[activePlatforms.Count - 2].transform.position.x;
+
+            if (_lastPlatPos > _prevPlatPos)
+            {
+                if (_randNum <= 65)
+                    _newPlatformPosition.x += (PLATFORM_X_SIZE + PLATFORM_PADDING);
+                else
+                    _newPlatformPosition.x -= (PLATFORM_X_SIZE + PLATFORM_PADDING);
+            }
+            else
+            {
+                if (_randNum <= 65)
+                    _newPlatformPosition.x -= (PLATFORM_X_SIZE + PLATFORM_PADDING);
+                else
+                    _newPlatformPosition.x += (PLATFORM_X_SIZE + PLATFORM_PADDING);
+            }
+        }
+
+        _newPlatformPosition.y += (PLATFORM_Y_SIZE + PLATFORM_PADDING);
+        return _newPlatformPosition;
     }
 }

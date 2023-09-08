@@ -10,29 +10,28 @@ public class Player : MonoBehaviour
 
     [Space(10)]
 
-    [HideInInspector] public float PLAYER_GRACE_PERIOD = 3.5f;
-
-    [HideInInspector] public GameObject playerSprite;
-    [HideInInspector] public Rigidbody2D playerRB;
-
-    private bool isPlayerFacingLeft = true;
-    [HideInInspector] public float gracePeriodTimer = float.PositiveInfinity;
-    [HideInInspector] public bool isOnPlatform = true;
-
     public CinemachineVirtualCamera vCamera;
+
+    public float PLAYER_GRACE_PERIOD { get; private set; } = 3.5f;
+
+    [SerializeField] private GameObject playerSprite;
+    public Rigidbody2D playerRB { get; private set; }
+
+    public float gracePeriodTimer { get; private set; } = float.PositiveInfinity;
+    public bool isOnPlatform { get; private set; } = true;
+    private bool isPlayerFacingLeft = true;
 
     // Start is called before the first frame update
     void Awake()
     {
         playerRB = GetComponent<Rigidbody2D>();
-        gameManager = FindAnyObjectByType<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (gracePeriodTimer < 0.0f || !isOnPlatform)
-            isOnPlatform = false;
+            StartCoroutine(Die());
         else
             gracePeriodTimer -= Time.deltaTime;
     }
@@ -41,14 +40,12 @@ public class Player : MonoBehaviour
     public void OnJump(InputValue value)
     {
         // move player in the direction they are facing
-        //Debug.Log("Jump Pressed");
         MovePlayer();
     }
 
     public void OnRotate(InputValue value)
     {
         // Flipping the Player Sprite as soon as the tap rotate and then move
-        //Debug.Log("Rotate Pressed");
         Flip();
         MovePlayer();
     }
@@ -77,23 +74,21 @@ public class Player : MonoBehaviour
         Vector3 newPosition = transform.position;
         if (isPlayerFacingLeft)
         {
-            newPosition.x -= gameManager.levelGenerator.PLATFORM_X_SPACING;
+            newPosition.x -= (gameManager.levelGenerator.PLATFORM_X_SIZE + gameManager.levelGenerator.PLATFORM_PADDING);
         }
         else
         {
-            newPosition.x += gameManager.levelGenerator.PLATFORM_X_SPACING;
+            newPosition.x += (gameManager.levelGenerator.PLATFORM_X_SIZE + gameManager.levelGenerator.PLATFORM_PADDING);
         }
-        newPosition.y += gameManager.levelGenerator.PLATFORM_Y_SPACING;
+        newPosition.y += (gameManager.levelGenerator.PLATFORM_Y_SIZE + gameManager.levelGenerator.PLATFORM_PADDING);
          
         transform.position = newPosition;
 
 
         if (!IsOnPlatform())
+            StartCoroutine(Die());
+        else
         {
-            isOnPlatform = false;
-            vCamera.Follow = null;
-        }
-        else {
             // score goes up
             gameManager.uiManager.currentScore += 1;
             gracePeriodTimer = Mathf.Clamp(gracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.25f), 0, PLAYER_GRACE_PERIOD);
@@ -102,7 +97,7 @@ public class Player : MonoBehaviour
 
     private bool IsOnPlatform()
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 1.0f);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, gameManager.levelGenerator.PLATFORM_Y_SIZE);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Platform"))
@@ -112,5 +107,17 @@ public class Player : MonoBehaviour
         }
 
         return false;
+    }
+
+    // On player "death", this coroutine gets enabled
+    public IEnumerator Die()
+    {
+        isOnPlatform = false;
+        vCamera.Follow = null;
+
+        yield return new WaitForSeconds(1.5f);
+        playerRB.bodyType = RigidbodyType2D.Dynamic;
+
+        yield return null;
     }
 }
