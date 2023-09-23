@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class UIManager : MonoBehaviour
 {
 
@@ -16,7 +15,6 @@ public class UIManager : MonoBehaviour
 
     public Slider gracePeriodSlider;
 
-    [HideInInspector] public int currentScore;
     public TMP_Text currentScoreText;
 
     [Space(10)]
@@ -27,25 +25,17 @@ public class UIManager : MonoBehaviour
 
     public Canvas gameOverCanvas;
 
-    [HideInInspector] public int highScore;
     public TMP_Text highScoreText;
     public TMP_Text finalScoreText;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        highScore = PlayerPrefs.GetInt("High Score");
-    }
 
     // Update is called once per frame
     void Update()
     {
-        currentScoreText.text = currentScore.ToString();
-        gracePeriodSlider.value = (gameManager.player.gracePeriodTimer / gameManager.player.PLAYER_GRACE_PERIOD);
+        currentScoreText.text = gameManager.scoreManager.CurrentScore.ToString();
+        gracePeriodSlider.value = (gameManager.player.GracePeriodTimer / gameManager.player.PLAYER_GRACE_PERIOD);
+
+        highScoreText.text = gameManager.scoreManager.HighScore.ToString();
+        finalScoreText.text = gameManager.scoreManager.CurrentScore.ToString();
     }
 
-    public void EndScreen()
-    {
-
-    }
 }

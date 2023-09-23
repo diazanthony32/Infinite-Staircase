@@ -10,114 +10,83 @@ public class Player : MonoBehaviour
 
     [Space(10)]
 
-    public CinemachineVirtualCamera vCamera;
+    [SerializeField] private GameObject playerSprite;
+    public Rigidbody2D PlayerRB { get; private set; }
+
+    public bool IsPlayerFacingLeft { get; private set; } = true;
 
     public float PLAYER_GRACE_PERIOD { get; private set; } = 3.5f;
+    public float GracePeriodTimer { get; private set; } = float.PositiveInfinity;
 
-    [SerializeField] private GameObject playerSprite;
-    public Rigidbody2D playerRB { get; private set; }
-
-    public float gracePeriodTimer { get; private set; } = float.PositiveInfinity;
-    public bool isOnPlatform { get; private set; } = true;
-    private bool isPlayerFacingLeft = true;
+    public bool IsGrounded { get; private set; } = true;
 
     // Start is called before the first frame update
     void Awake()
     {
-        playerRB = GetComponent<Rigidbody2D>();
+        PlayerRB = GetComponent<Rigidbody2D>();
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        if (gracePeriodTimer < 0.0f || !isOnPlatform)
+        if (GracePeriodTimer < 0.0f || !IsGrounded)
             StartCoroutine(Die());
         else
-            gracePeriodTimer -= Time.deltaTime;
+            GracePeriodTimer -= Time.deltaTime;
     }
 
 
-    public void OnJump(InputValue value)
+    //
+    public void FlipPlayer()
     {
-        // move player in the direction they are facing
-        MovePlayer();
-    }
-
-    public void OnRotate(InputValue value)
-    {
-        // Flipping the Player Sprite as soon as the tap rotate and then move
-        Flip();
-        MovePlayer();
-    }
-
-    public void Flip()
-    {
-        // Flips the transform of the Sprite by inverting its x value
+        // Flips the transform of the Sprite by inverting its x scale value
         Vector3 currentScale = playerSprite.transform.localScale;
         currentScale.x *= -1;
         playerSprite.transform.localScale = currentScale;
 
         // set bool to the oppisite of what it was
-        isPlayerFacingLeft = !isPlayerFacingLeft;
+        IsPlayerFacingLeft = !IsPlayerFacingLeft;
     }
 
-    public void MovePlayer()
-    {
-
-        AudioManager.PlaySound("Jump");
-
-        // begins the grace period timer
-        if (gracePeriodTimer == float.PositiveInfinity)
-            gracePeriodTimer = PLAYER_GRACE_PERIOD;
-
-        // move the player up and in the direction they are facing
-        Vector3 newPosition = transform.position;
-        if (isPlayerFacingLeft)
-        {
-            newPosition.x -= (gameManager.levelGenerator.PLATFORM_X_SIZE + gameManager.levelGenerator.PLATFORM_PADDING);
-        }
-        else
-        {
-            newPosition.x += (gameManager.levelGenerator.PLATFORM_X_SIZE + gameManager.levelGenerator.PLATFORM_PADDING);
-        }
-        newPosition.y += (gameManager.levelGenerator.PLATFORM_Y_SIZE + gameManager.levelGenerator.PLATFORM_PADDING);
-         
-        transform.position = newPosition;
-
-
-        if (!IsOnPlatform())
-            StartCoroutine(Die());
-        else
-        {
-            // score goes up
-            gameManager.uiManager.currentScore += 1;
-            gracePeriodTimer = Mathf.Clamp(gracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.25f), 0, PLAYER_GRACE_PERIOD);
-        }
-    }
-
-    private bool IsOnPlatform()
-    {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, gameManager.levelGenerator.PLATFORM_Y_SIZE);
-        foreach (var hitCollider in hitColliders)
-        {
-            if (hitCollider.CompareTag("Platform"))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     // On player "death", this coroutine gets enabled
     public IEnumerator Die()
     {
-        isOnPlatform = false;
-        vCamera.Follow = null;
+        IsGrounded = false;
+        gameManager.vCam.Follow = null;
 
         yield return new WaitForSeconds(1.5f);
-        playerRB.bodyType = RigidbodyType2D.Dynamic;
+        PlayerRB.bodyType = RigidbodyType2D.Dynamic;
 
         yield return null;
+    }
+
+
+    // Begins the Grace period timer and adds a small percentage back avery time the player does an input
+    public void UpdateGracePeriod()
+    {
+        // begins the countdown of the grace period timer
+        if (GracePeriodTimer == float.PositiveInfinity)
+            GracePeriodTimer = PLAYER_GRACE_PERIOD;
+        else
+            GracePeriodTimer = Mathf.Clamp(GracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.2f), 0, PLAYER_GRACE_PERIOD);
+    }
+
+
+    // Checking if the player is on the Platform, duh...
+    public void CheckForPlatform()
+    {
+        IsGrounded = false;
+
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, 0.25f);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Platform"))
+            {
+                IsGrounded = true;
+                break;
+            }
+        }
     }
 }

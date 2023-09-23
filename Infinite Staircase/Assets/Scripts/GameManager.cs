@@ -9,12 +9,18 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public LevelGenerator levelGenerator;
+    public LevelMover levelMover;
     public AudioManager audioManager;
     public UIManager uiManager;
+    public ScoreManager scoreManager;
 
     [Space(10)]
 
     public Player player;
+
+    [Space(10)]
+
+    public CinemachineVirtualCamera vCam;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +31,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.isOnPlatform == false)
+        if (player.IsGrounded == false)
             StartCoroutine(GameOver());
     }
 
@@ -35,17 +41,8 @@ public class GameManager : MonoBehaviour
         // disable player input
         uiManager.inputCanvas.enabled = false;
 
-        // checks if the current score is higher than their best score, if so make it the new highest
-        if (uiManager.currentScore > uiManager.highScore)
-        {
-            uiManager.highScore = uiManager.currentScore;
-            PlayerPrefs.SetInt("High Score", uiManager.currentScore);
-        }
-
         yield return new WaitForSeconds(3.0f);
 
-        uiManager.highScoreText.text = uiManager.highScore.ToString();
-        uiManager.finalScoreText.text = uiManager.currentScore.ToString();
         uiManager.gameUICanvas.enabled = false;
         uiManager.gameOverCanvas.enabled = true;
 

@@ -8,38 +8,33 @@ public class LevelGenerator : MonoBehaviour
 
     [Space(10)]
 
+    // used for seed generation
     [SerializeField] private string seed;
     [SerializeField] private bool useSeed;
 
-    public float PLATFORM_X_SIZE { get; private set; } = 1.0f;
-    public float PLATFORM_Y_SIZE { get; private set; } = 0.5f;
-    public float PLATFORM_PADDING { get; private set; } = 0.1f;
+    // the offsets platforms will be moved when getting a new position
+    private const float PLATFORM_PADDING = 0.1f;
+    public float MOVE_X { get; private set; }
+    public float MOVE_Y { get; private set; }
+
+    // the percentage of having the next platform go in the same direction as the previous platform
+    private const float CHANCE_TO_REPEAT = 0.65f;
 
     // the smaller the number, the closer the player can be to the top of the staircase without rearranging
     private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 12.5f;
 
-    [SerializeField] private GameObject levelStart;
+    // for platform management and recycling
+    private const int platformCount = 35;
     [SerializeField] private List<GameObject> platformTypes;
-
-    private List<GameObject> activePlatforms = new List<GameObject>();
-
-    private int platformCount = 35;
-    private GameObject lastPlatform;
+    public List<GameObject> ActivePlatforms { get; private set; } = new List<GameObject>();
 
 
     // Start is called before the first frame update
     void Awake()
     {
-        // determines if the level is to be generated using a seed or have it randomly generate one
-        UseSeededGeneration();
-
-        // Initializes the starting platform creation of the level
+        SetPlacementDistances();
+        DetermineSeededGeneration();
         InitalizePlatforms();
-
-        // starts the player facing the right way initially so they dont have an immediate fail (unless they rotate first)
-        if (activePlatforms[1].transform.position.x > 0){
-            gameManager.player.Flip();
-        }
     }
 
 
@@ -47,14 +42,32 @@ public class LevelGenerator : MonoBehaviour
     void Update()
     {
         // if the player position is less than the desired spacing, move the first platform up
-        if (Vector3.Distance(gameManager.player.transform.position, lastPlatform.transform.position) < PLAYER_DISTANCE_SPAWN_LEVEL_PART){
+        if (Vector3.Distance(gameManager.player.transform.position, ActivePlatforms[^1].transform.position) < PLAYER_DISTANCE_SPAWN_LEVEL_PART)
+        {
             RearragePlatform();
         }
     }
 
 
+    // Gets the scale of the platforms and sets it as the minimum platform displacement distances
+    void SetPlacementDistances()
+    {
+        if (platformTypes.Count > 0)
+        {
+            Transform platform = platformTypes[0].gameObject.transform;
+
+            MOVE_X = (platform.localScale.x + PLATFORM_PADDING);
+            MOVE_Y = (platform.localScale.y + PLATFORM_PADDING);
+        }
+        else
+        {
+            Debug.LogError("No platforms added into the platform types list in \"LevelGenerator.cs\"!");
+        }
+    }
+
+
     // determines if the level is to be generated using a seed or have it randomly generate one
-    private void UseSeededGeneration()
+    private void DetermineSeededGeneration()
     {
         // if a seed is provided and we want to generate the leel via a seed, then activiate the seed
         if (seed != "" && useSeed)
@@ -69,7 +82,6 @@ public class LevelGenerator : MonoBehaviour
 
             seed = randSeed.ToString();
             Debug.Log(seed);
-
         }
     }
 
@@ -77,88 +89,64 @@ public class LevelGenerator : MonoBehaviour
     // Initializes the starting platform creation of the level
     private void InitalizePlatforms()
     {
-        // makes the starting platform the last known platform position and adds it to the active platforms list
-        lastPlatform = levelStart;
-        activePlatforms.Add(levelStart);
-
         // Spawn the set amount of platforms set by the platformCount variable
-        for (int i = activePlatforms.Count; i < platformCount; i++)
+        for (int i = ActivePlatforms.Count; i < platformCount; i++)
         {
             NewPlatform();
         }
     }
 
 
-    //
+    // Handles the creation of the and placement of platforms
     private void NewPlatform()
     {
-        // spawn in a new platform prefab from the platform types list and places it in the last platforms position
-        GameObject newPlatform = Instantiate(platformTypes[Random.Range(0, platformTypes.Count)], lastPlatform.transform.position, Quaternion.identity);
+        // If there are no platforms in the active platforms list, set the spawn position to 0,0,0
+        Vector3 _initPosition = ActivePlatforms.Count > 0 ? ActivePlatforms[^1].transform.position : Vector3.zero;
 
-        // modifies the position of the spawned platform to left/right and then up from the last platform in the list
-        newPlatform.transform.position = NewPlatformPosition(newPlatform.transform);
+        // spawn in a new platform prefab from the platform types list
+        GameObject newPlatform = Instantiate(platformTypes[Random.Range(0, platformTypes.Count)], _initPosition, Quaternion.identity);
 
-        // adds the newly spawned platform to the last known platform position and to the active Platforms list
-        lastPlatform = newPlatform.gameObject;
-        activePlatforms.Add(newPlatform.gameObject);
-
+        newPlatform.transform.position = GetNewPlatformPosition();
+        ActivePlatforms.Add(newPlatform);
     }
 
 
     // rearrages the platform from the oldest(first) on the list back to the newest(last) on the list, then giving it a new position
     private void RearragePlatform()
     {
-        // selects the oldest platform on the list (first>last) and removes it from the list
-        GameObject movingPlatform = activePlatforms[0];
-        activePlatforms.RemoveAt(activePlatforms.IndexOf(movingPlatform));
+        // selects the oldest platform on the list and removes it from the active platform list
+        GameObject movingPlatform = ActivePlatforms[0];
+        ActivePlatforms.RemoveAt(ActivePlatforms.IndexOf(movingPlatform));
 
-        // modifies the position of the moving platform to left/right and then up from the last platform in the list
-        movingPlatform.transform.position = NewPlatformPosition(lastPlatform.transform);
-
-        // re-adds the newly moved platform to the last known platform position and to the active Platforms list
-        lastPlatform = movingPlatform;
-        activePlatforms.Add(movingPlatform);
+        movingPlatform.transform.position = GetNewPlatformPosition();
+        ActivePlatforms.Add(movingPlatform);
     }
 
 
     // rules set to decide the platforms new position
-    private Vector3 NewPlatformPosition(Transform platform)
+    private Vector3 GetNewPlatformPosition()
     {
-        int _randNum = Random.Range(1, 101);
-        Vector3 _newPlatformPosition = platform.transform.position;
+        float _randNum = Random.Range(0.0f, 1.0f);
 
-        if (activePlatforms.Count < 2)
+        switch (ActivePlatforms.Count)
         {
-            if (_randNum <= 50)
-                _newPlatformPosition.x -= (PLATFORM_X_SIZE + PLATFORM_PADDING);
-            else
-                _newPlatformPosition.x += (PLATFORM_X_SIZE + PLATFORM_PADDING);
+            // first platform created stays at 0,0,0
+            case 0:
+                return Vector3.zero;
+
+            // second platform has a 50/50 chance of going left or right
+            case 1:
+                return new Vector3(_randNum <= 50 ? -MOVE_X : MOVE_X, MOVE_Y, 0.0f);
+
+            // following platforms have a higher chance to continue in the direction that the prev platform is already headed
+            case > 1:
+                Vector3 _lastPlatPos = ActivePlatforms[^1].transform.position;
+                Vector3 _prevPlatPos = ActivePlatforms[^2].transform.position;
+
+                return new Vector3(_lastPlatPos.x + ((_lastPlatPos.x > _prevPlatPos.x ? 1 : -1) * (_randNum <= CHANCE_TO_REPEAT ? MOVE_X : -MOVE_X)), _lastPlatPos.y + MOVE_Y, 0);
         }
 
-        // tries to give a slightly higher priority to keeping stairs going in the same direction
-        // checking if the last platform is to the right of the platform before it
-        else
-        {
-            float _lastPlatPos = lastPlatform.transform.position.x;
-            float _prevPlatPos = activePlatforms[activePlatforms.Count - 2].transform.position.x;
-
-            if (_lastPlatPos > _prevPlatPos)
-            {
-                if (_randNum <= 65)
-                    _newPlatformPosition.x += (PLATFORM_X_SIZE + PLATFORM_PADDING);
-                else
-                    _newPlatformPosition.x -= (PLATFORM_X_SIZE + PLATFORM_PADDING);
-            }
-            else
-            {
-                if (_randNum <= 65)
-                    _newPlatformPosition.x -= (PLATFORM_X_SIZE + PLATFORM_PADDING);
-                else
-                    _newPlatformPosition.x += (PLATFORM_X_SIZE + PLATFORM_PADDING);
-            }
-        }
-
-        _newPlatformPosition.y += (PLATFORM_Y_SIZE + PLATFORM_PADDING);
-        return _newPlatformPosition;
+        Debug.LogError("No case found for Platform #" + ActivePlatforms.Count + ". I don't know how or why...");
+        return Vector3.zero;
     }
 }
