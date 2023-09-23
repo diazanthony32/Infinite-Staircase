@@ -26,16 +26,19 @@ public class Player : MonoBehaviour
         PlayerRB = GetComponent<Rigidbody2D>();
     }
 
-
     // Update is called once per frame
     void Update()
     {
         if (GracePeriodTimer < 0.0f || !IsGrounded)
+        {
             StartCoroutine(Die());
+        }
         else
+        {
+            CheckForPlatform();
             GracePeriodTimer -= Time.deltaTime;
+        }
     }
-
 
     //
     public void FlipPlayer()
@@ -49,19 +52,16 @@ public class Player : MonoBehaviour
         IsPlayerFacingLeft = !IsPlayerFacingLeft;
     }
 
-
     // On player "death", this coroutine gets enabled
     public IEnumerator Die()
     {
         IsGrounded = false;
-        gameManager.vCam.Follow = null;
 
         yield return new WaitForSeconds(1.5f);
         PlayerRB.bodyType = RigidbodyType2D.Dynamic;
 
         yield return null;
     }
-
 
     // Begins the Grace period timer and adds a small percentage back avery time the player does an input
     public void UpdateGracePeriod()
@@ -72,7 +72,6 @@ public class Player : MonoBehaviour
         else
             GracePeriodTimer = Mathf.Clamp(GracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.2f), 0, PLAYER_GRACE_PERIOD);
     }
-
 
     // Checking if the player is on the Platform, duh...
     public void CheckForPlatform()

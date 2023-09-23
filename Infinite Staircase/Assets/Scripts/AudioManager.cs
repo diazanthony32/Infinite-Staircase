@@ -19,6 +19,7 @@ public class AudioManager : MonoBehaviour
         jumpSound = Resources.Load<AudioClip>("Jump");
     }
 
+    //
     public static void PlaySound(string clip)
     {
         switch (clip) {

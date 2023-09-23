@@ -28,7 +28,6 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private List<GameObject> platformTypes;
     public List<GameObject> ActivePlatforms { get; private set; } = new List<GameObject>();
 
-
     // Start is called before the first frame update
     void Awake()
     {
@@ -36,7 +35,6 @@ public class LevelGenerator : MonoBehaviour
         DetermineSeededGeneration();
         InitalizePlatforms();
     }
-
 
     // Update is called once per frame
     void Update()
@@ -47,7 +45,6 @@ public class LevelGenerator : MonoBehaviour
             RearragePlatform();
         }
     }
-
 
     // Gets the scale of the platforms and sets it as the minimum platform displacement distances
     void SetPlacementDistances()
@@ -64,7 +61,6 @@ public class LevelGenerator : MonoBehaviour
             Debug.LogError("No platforms added into the platform types list in \"LevelGenerator.cs\"!");
         }
     }
-
 
     // determines if the level is to be generated using a seed or have it randomly generate one
     private void DetermineSeededGeneration()
@@ -85,7 +81,6 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-
     // Initializes the starting platform creation of the level
     private void InitalizePlatforms()
     {
@@ -95,7 +90,6 @@ public class LevelGenerator : MonoBehaviour
             NewPlatform();
         }
     }
-
 
     // Handles the creation of the and placement of platforms
     private void NewPlatform()
@@ -110,7 +104,6 @@ public class LevelGenerator : MonoBehaviour
         ActivePlatforms.Add(newPlatform);
     }
 
-
     // rearrages the platform from the oldest(first) on the list back to the newest(last) on the list, then giving it a new position
     private void RearragePlatform()
     {
@@ -121,7 +114,6 @@ public class LevelGenerator : MonoBehaviour
         movingPlatform.transform.position = GetNewPlatformPosition();
         ActivePlatforms.Add(movingPlatform);
     }
-
 
     // rules set to decide the platforms new position
     private Vector3 GetNewPlatformPosition()

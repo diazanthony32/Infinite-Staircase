@@ -9,19 +9,22 @@ public class ScoreManager : MonoBehaviour
 
     public int CurrentScore { get; private set; }
     public int HighScore { get; private set; }
-
     public bool NewHighScore { get; private set; } = false;
+
+    private Player GM_Player;
 
     // Start is called before the first frame update
     void Start()
     {
+        GM_Player = gameManager.player;
+
         HighScore = PlayerPrefs.GetInt("High Score");
     }
 
     // Update is called once per frame
     public void UpdateScore()
     {
-        if (gameManager.player.IsGrounded)
+        if (GM_Player.IsGrounded)
         {
             CurrentScore += 1;
         }

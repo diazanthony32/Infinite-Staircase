@@ -13,20 +13,18 @@ public class GameManager : MonoBehaviour
     public AudioManager audioManager;
     public UIManager uiManager;
     public ScoreManager scoreManager;
+    public CameraManager cameraManager;
 
     [Space(10)]
 
     public Player player;
-
-    [Space(10)]
-
-    public CinemachineVirtualCamera vCam;
 
     // Start is called before the first frame update
     void Start()
     {
         
     }
+
 
     // Update is called once per frame
     void Update()
@@ -49,6 +47,7 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
+    //
     public void Reset()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
