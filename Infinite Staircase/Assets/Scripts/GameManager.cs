@@ -37,12 +37,12 @@ public class GameManager : MonoBehaviour
     IEnumerator GameOver()
     {
         // disable player input
-        uiManager.inputCanvas.enabled = false;
+        uiManager.viewPlayerInput.SetActive(false);
 
         yield return new WaitForSeconds(3.0f);
 
-        uiManager.gameUICanvas.enabled = false;
-        uiManager.gameOverCanvas.enabled = true;
+        uiManager.viewGameUI.SetActive(false);
+        uiManager.viewGameOver.SetActive(true);
 
         yield return null;
     }

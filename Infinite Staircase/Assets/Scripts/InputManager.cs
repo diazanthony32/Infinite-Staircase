@@ -24,7 +24,7 @@ public class InputManager : MonoBehaviour
     //
     public void OnJump(InputValue value)
     {
-        UpdateLoop();
+        StartCoroutine(UpdateLoop());
     }
 
     //
@@ -32,15 +32,18 @@ public class InputManager : MonoBehaviour
     {
         // Flipping the Player Sprite as soon as the tap rotate
         GM_Player.FlipPlayer();
-        UpdateLoop();
+        StartCoroutine(UpdateLoop());
     }
 
     //
-    void UpdateLoop()
+    IEnumerator UpdateLoop()
     {
         GM_LevelMover.ShiftLevel();
-        GM_CameraManager.ShiftCamera();
         GM_Player.UpdateGracePeriod();
+
+        yield return 0;
+
         GM_ScoreManager.UpdateScore();
+        GM_CameraManager.ShiftCamera();
     }
 }

@@ -10,17 +10,17 @@ public class UIManager : MonoBehaviour
 
     [Space(10)]
 
-    public Canvas gameUICanvas;
+    public GameObject viewGameUI;
     public Slider gracePeriodSlider;
     public TMP_Text currentScoreText;
 
     [Space(10)]
 
-    public Canvas inputCanvas;
+    public GameObject viewPlayerInput;
 
     [Space(10)]
 
-    public Canvas gameOverCanvas;
+    public GameObject viewGameOver;
     public TMP_Text highScoreText;
     public TMP_Text finalScoreText;
 
