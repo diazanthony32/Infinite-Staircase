@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     private CameraManager GM_CameraManager;
     private Player GM_Player;
     private ScoreManager GM_ScoreManager;
+    private Parallax GM_Parallax;
 
     //
     private void Awake()
@@ -19,6 +20,7 @@ public class InputManager : MonoBehaviour
         GM_CameraManager = gameManager.cameraManager;
         GM_Player = gameManager.player;
         GM_ScoreManager = gameManager.scoreManager;
+        GM_Parallax = gameManager.parallax;
     }
 
     //
@@ -39,6 +41,7 @@ public class InputManager : MonoBehaviour
     IEnumerator UpdateLoop()
     {
         GM_LevelMover.ShiftLevel();
+        GM_Parallax.ShiftBackground();
         GM_Player.UpdateGracePeriod();
 
         yield return 0;

@@ -13,7 +13,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private bool useSeed;
 
     // the offsets platforms will be moved when getting a new position
-    private const float PLATFORM_PADDING = 0.1f;
+    private const float PLATFORM_PADDING = 0.05f;
     public float MOVE_X { get; private set; }
     public float MOVE_Y { get; private set; }
 
@@ -21,7 +21,7 @@ public class LevelGenerator : MonoBehaviour
     private const float CHANCE_TO_REPEAT = 0.65f;
 
     // the smaller the number, the closer the player can be to the top of the staircase without rearranging
-    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 12.5f;
+    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 5.0f;
 
     // for platform management and recycling
     private const int platformCount = 35;
@@ -51,10 +51,10 @@ public class LevelGenerator : MonoBehaviour
     {
         if (platformTypes.Count > 0)
         {
-            Transform platform = platformTypes[0].gameObject.transform;
+            BoxCollider2D platform = platformTypes[0].GetComponent<BoxCollider2D>();
 
-            MOVE_X = (platform.localScale.x + PLATFORM_PADDING);
-            MOVE_Y = (platform.localScale.y + PLATFORM_PADDING);
+            MOVE_X = (platform.size.x + PLATFORM_PADDING);
+            MOVE_Y = (platform.size.y + PLATFORM_PADDING);
         }
         else
         {
@@ -89,6 +89,10 @@ public class LevelGenerator : MonoBehaviour
         {
             NewPlatform();
         }
+
+        // sets player so they are always facing the first platform
+        if (ActivePlatforms[1].transform.position.x < 0.0f)
+            gameManager.player.FlipPlayer();
     }
 
     // Handles the creation of the and placement of platforms

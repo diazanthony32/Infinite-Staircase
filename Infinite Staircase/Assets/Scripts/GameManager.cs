@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public UIManager uiManager;
     public ScoreManager scoreManager;
     public CameraManager cameraManager;
+    public Parallax parallax;
 
     [Space(10)]
 
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.IsGrounded == false)
+        if (!player.IsGrounded)
             StartCoroutine(GameOver());
     }
 

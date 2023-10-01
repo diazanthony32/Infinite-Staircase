@@ -10,10 +10,10 @@ public class Player : MonoBehaviour
 
     [Space(10)]
 
-    [SerializeField] private GameObject playerSprite;
+    private SpriteRenderer playerSprite;
     public Rigidbody2D PlayerRB { get; private set; }
 
-    public bool IsPlayerFacingLeft { get; private set; } = true;
+    public bool IsPlayerFacingLeft { get; private set; } = false;
 
     public float PLAYER_GRACE_PERIOD { get; private set; } = 3.5f;
     public float GracePeriodTimer { get; private set; } = float.PositiveInfinity;
@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        playerSprite = GetComponentInChildren<SpriteRenderer>();
         PlayerRB = GetComponent<Rigidbody2D>();
     }
 
@@ -44,9 +45,7 @@ public class Player : MonoBehaviour
     public void FlipPlayer()
     {
         // Flips the transform of the Sprite by inverting its x scale value
-        Vector3 currentScale = playerSprite.transform.localScale;
-        currentScale.x *= -1;
-        playerSprite.transform.localScale = currentScale;
+        playerSprite.flipX = !playerSprite.flipX;
 
         // set bool to the oppisite of what it was
         IsPlayerFacingLeft = !IsPlayerFacingLeft;
