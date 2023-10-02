@@ -41,11 +41,11 @@ public class InputManager : MonoBehaviour
     IEnumerator UpdateLoop()
     {
         GM_LevelMover.ShiftLevel();
-        GM_Parallax.ShiftBackground();
         GM_Player.UpdateGracePeriod();
 
         yield return 0;
 
+        GM_Parallax.ShiftBackground();
         GM_ScoreManager.UpdateScore();
         GM_CameraManager.ShiftCamera();
     }

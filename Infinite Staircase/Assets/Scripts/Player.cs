@@ -12,10 +12,11 @@ public class Player : MonoBehaviour
 
     private SpriteRenderer playerSprite;
     public Rigidbody2D PlayerRB { get; private set; }
+    private Animator playerAnimator;
 
     public bool IsPlayerFacingLeft { get; private set; } = false;
 
-    public float PLAYER_GRACE_PERIOD { get; private set; } = 3.5f;
+    public float PLAYER_GRACE_PERIOD { get; private set; } = 3.0f;
     public float GracePeriodTimer { get; private set; } = float.PositiveInfinity;
 
     public bool IsGrounded { get; private set; } = true;
@@ -24,7 +25,8 @@ public class Player : MonoBehaviour
     void Awake()
     {
         playerSprite = GetComponentInChildren<SpriteRenderer>();
-        PlayerRB = GetComponent<Rigidbody2D>();
+        PlayerRB = GetComponentInChildren<Rigidbody2D>();
+        playerAnimator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -54,22 +56,24 @@ public class Player : MonoBehaviour
     // On player "death", this coroutine gets enabled
     public IEnumerator Die()
     {
+        playerAnimator.SetTrigger("Die");
+
         IsGrounded = false;
 
         yield return new WaitForSeconds(1.5f);
         PlayerRB.bodyType = RigidbodyType2D.Dynamic;
-
-        yield return null;
     }
 
     // Begins the Grace period timer and adds a small percentage back avery time the player does an input
     public void UpdateGracePeriod()
     {
+        playerAnimator.SetTrigger("Jump");
+
         // begins the countdown of the grace period timer
         if (GracePeriodTimer == float.PositiveInfinity)
             GracePeriodTimer = PLAYER_GRACE_PERIOD;
         else
-            GracePeriodTimer = Mathf.Clamp(GracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.2f), 0, PLAYER_GRACE_PERIOD);
+            GracePeriodTimer = Mathf.Clamp(GracePeriodTimer + (PLAYER_GRACE_PERIOD * 0.15f), 0, PLAYER_GRACE_PERIOD);
     }
 
     // Checking if the player is on the Platform, duh...

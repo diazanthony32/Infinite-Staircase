@@ -7,7 +7,7 @@ public class Parallax : MonoBehaviour
     public GameManager gameManager;
 
     LevelGenerator GM_LevelGenerator;
-    CameraManager GM_CameraManager;
+    Player GM_Player;
 
     [System.Serializable]
     public class ParallaxEffectors
@@ -24,7 +24,7 @@ public class Parallax : MonoBehaviour
     private void Awake()
     {
         GM_LevelGenerator = gameManager.levelGenerator;
-        GM_CameraManager = gameManager.cameraManager;
+        GM_Player = gameManager.player;
     }
     private void Update()
     {
@@ -34,12 +34,14 @@ public class Parallax : MonoBehaviour
     //
     public void ShiftBackground()
     {
+        //if (!gameManager.player.IsGrounded) { return; }
+
         foreach (ParallaxEffectors item in list)
         {
             Vector3 initPos = item.layer.transform.position;
 
             item.layer.transform.position = new Vector3(
-                initPos.x + (((GM_LevelGenerator.gameManager.player.IsPlayerFacingLeft ? 1 : -1) * GM_LevelGenerator.MOVE_X) * (1 + item.parallaxEFX)),
+                initPos.x + (((GM_Player.IsPlayerFacingLeft ? 1 : -1) * GM_LevelGenerator.MOVE_X) * (1 + (GM_Player.IsGrounded ? item.parallaxEFX : 0))),
                 initPos.y - (GM_LevelGenerator.MOVE_Y * (1 + item.parallaxEFY)),
                 0);
 

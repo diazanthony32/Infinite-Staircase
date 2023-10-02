@@ -27,14 +27,12 @@ public class UIManager : MonoBehaviour
     private ScoreManager GM_ScoreManager;
     private Player GM_Player;
 
-
     //
     private void Start()
     {
         GM_ScoreManager = gameManager.scoreManager;
         GM_Player = gameManager.player;
     }
-
 
     // Update is called once per frame
     void Update()

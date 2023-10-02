@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
         
     }
 
-
     // Update is called once per frame
     void Update()
     {
@@ -46,11 +45,5 @@ public class GameManager : MonoBehaviour
         uiManager.viewGameOver.SetActive(true);
 
         yield return null;
-    }
-
-    //
-    public void Reset()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
