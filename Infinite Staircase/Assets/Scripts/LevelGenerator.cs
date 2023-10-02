@@ -21,7 +21,7 @@ public class LevelGenerator : MonoBehaviour
     private const float CHANCE_TO_REPEAT = 0.65f;
 
     // the smaller the number, the closer the player can be to the top of the staircase without rearranging
-    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 5.0f;
+    private const float PLAYER_DISTANCE_SPAWN_LEVEL_PART = 10.0f;
 
     // for platform management and recycling
     private const int platformCount = 35;
