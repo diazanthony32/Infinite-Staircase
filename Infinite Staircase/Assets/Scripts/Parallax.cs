@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,56 +7,77 @@ public class Parallax : MonoBehaviour
 {
     public GameManager gameManager;
 
-    LevelGenerator GM_LevelGenerator;
-    Player GM_Player;
+    public enum scrollDirection { Left, Right };
 
-    [System.Serializable]
-    public class ParallaxEffectors
-    {
-        public bool loop;
-        public GameObject layer;
-        public float parallaxEFX;
-        public float parallaxEFY;
-    }
+    [Space(10)]
 
-    public List<ParallaxEffectors> list = new List<ParallaxEffectors>();
+    public bool loopX;
+    public float parallaxEffectX;
+    public bool autoScrollX;
+    public scrollDirection scrollDirectionX;
+    public float scollSpeedX;
+
+    [Space(10)]
+
+    public bool loopY;
+    public float parallaxEffectY;
+    public bool autoScrollY;
+    public scrollDirection scrollDirectionY;
+    public float scollSpeedY;
+
+    Vector3 startPos;
+    float boundsX;
+    float boundsY;
+    CinemachineVirtualCamera GM_VCamera;
 
     //
     private void Awake()
     {
-        GM_LevelGenerator = gameManager.levelGenerator;
-        GM_Player = gameManager.player;
-    }
-    private void Update()
-    {
-
+        startPos = transform.position;
+        boundsX = GetComponentInChildren<Renderer>().bounds.size.x;
+        boundsY = GetComponentInChildren<Renderer>().bounds.size.y;
+        GM_VCamera = gameManager.VCamera;
     }
 
     //
-    public void ShiftBackground()
+    void Update()
     {
-        //if (!gameManager.player.IsGrounded) { return; }
+        float tempX = GM_VCamera.transform.position.x * (1 - parallaxEffectX);
+        float distanceX = (GM_VCamera.transform.position.x * parallaxEffectX);
+        float desiredXPos = startPos.x + distanceX;
 
-        foreach (ParallaxEffectors item in list)
+        float tempY = GM_VCamera.transform.position.y * (1 - parallaxEffectY);
+        float distanceY = (GM_VCamera.transform.position.y * parallaxEffectY);
+        float desiredYPos = startPos.y + distanceY;
+
+        if (autoScrollX)
         {
-            Vector3 initPos = item.layer.transform.position;
+            // this will push the object to the left
+            desiredXPos = transform.position.x - scollSpeedX;
+        }
 
-            item.layer.transform.position = new Vector3(
-                initPos.x + (((GM_Player.IsPlayerFacingLeft ? 1 : -1) * GM_LevelGenerator.MOVE_X) * (1 + (GM_Player.IsGrounded ? item.parallaxEFX : 0))),
-                initPos.y - (GM_LevelGenerator.MOVE_Y * (1 + item.parallaxEFY)),
-                0);
+        if (autoScrollY)
+        {
+            // this will push the object down
+            desiredYPos = transform.position.y - scollSpeedY;
+        }
 
-            if (item.loop)
+        transform.position = new Vector2(desiredXPos, desiredYPos);
+
+        // used for looping the item
+        if (loopX)
+        {
+            if (GM_VCamera.transform.position.x > (transform.position.x + boundsX))
             {
-                // used for looping the item
-                if (Mathf.Abs(item.layer.transform.position.x) > item.layer.GetComponentInChildren<Renderer>().bounds.size.x)
-                {
-                    item.layer.transform.position = new Vector3(0, item.layer.transform.position.y, 0);
-                }
-                else if (Mathf.Abs(item.layer.transform.position.y) > item.layer.GetComponentInChildren<Renderer>().bounds.size.y)
-                {
-                    item.layer.transform.position = new Vector3(item.layer.transform.position.x, 0, 0);
-                }
+                transform.position = new Vector3(GM_VCamera.transform.position.x, transform.position.y, 0);
+            }
+        }
+
+        if (loopY) 
+        {
+            if (Mathf.Abs(GM_VCamera.transform.position.y) > (Mathf.Abs(transform.position.y) + boundsY))
+            {
+                transform.position = new Vector3(transform.position.x, GM_VCamera.transform.position.y, 0);
             }
         }
     }

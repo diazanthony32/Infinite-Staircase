@@ -9,12 +9,15 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public LevelGenerator levelGenerator;
-    public LevelMover levelMover;
     public AudioManager audioManager;
     public UIManager uiManager;
     public ScoreManager scoreManager;
-    public CameraManager cameraManager;
     public Parallax parallax;
+
+    [Space(10)]
+
+    public CinemachineVirtualCamera VCamera;
+
 
     [Space(10)]
 

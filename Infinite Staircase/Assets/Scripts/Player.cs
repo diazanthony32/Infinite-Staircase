@@ -21,12 +21,18 @@ public class Player : MonoBehaviour
 
     public bool IsGrounded { get; private set; } = true;
 
+    private LevelGenerator GM_LevelGenerator;
+    private CinemachineVirtualCamera GM_VCamera;
+
     // Start is called before the first frame update
     void Awake()
     {
         playerSprite = GetComponentInChildren<SpriteRenderer>();
         PlayerRB = GetComponentInChildren<Rigidbody2D>();
         playerAnimator = GetComponentInChildren<Animator>();
+
+        GM_LevelGenerator = gameManager.levelGenerator;
+        GM_VCamera = gameManager.VCamera;
     }
 
     // Update is called once per frame
@@ -34,13 +40,29 @@ public class Player : MonoBehaviour
     {
         if (GracePeriodTimer < 0.0f || !IsGrounded)
         {
+            GM_VCamera.Follow = null;
             StartCoroutine(Die());
         }
         else
         {
-            CheckForPlatform();
             GracePeriodTimer -= Time.deltaTime;
         }
+    }
+
+    //
+    public void OnJump(InputValue value)
+    {
+        MovePlayer();
+        CheckForPlatform();
+    }
+
+    //
+    public void OnRotate(InputValue value)
+    {
+        // Flipping the Player Sprite as soon as the tap rotate
+        FlipPlayer();
+        MovePlayer();
+        CheckForPlatform();
     }
 
     //
@@ -53,15 +75,16 @@ public class Player : MonoBehaviour
         IsPlayerFacingLeft = !IsPlayerFacingLeft;
     }
 
-    // On player "death", this coroutine gets enabled
-    public IEnumerator Die()
+    //
+    public void MovePlayer() 
     {
-        playerAnimator.SetTrigger("Die");
+        AudioManager.PlaySound("Jump");
 
-        IsGrounded = false;
-
-        yield return new WaitForSeconds(1.5f);
-        PlayerRB.bodyType = RigidbodyType2D.Dynamic;
+        //
+        transform.position = new Vector3(
+                transform.position.x + ((IsPlayerFacingLeft ? -1 : 1) * (GM_LevelGenerator.MOVE_X)),
+                transform.position.y + GM_LevelGenerator.MOVE_Y,
+                0);
     }
 
     // Begins the Grace period timer and adds a small percentage back avery time the player does an input
@@ -90,5 +113,16 @@ public class Player : MonoBehaviour
                 break;
             }
         }
+    }
+
+    // On player "death", this coroutine gets enabled
+    public IEnumerator Die()
+    {
+        playerAnimator.SetTrigger("Die");
+
+        IsGrounded = false;
+
+        yield return new WaitForSeconds(1.5f);
+        PlayerRB.bodyType = RigidbodyType2D.Dynamic;
     }
 }
