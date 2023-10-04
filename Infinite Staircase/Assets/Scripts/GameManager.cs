@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
     public AudioManager audioManager;
     public UIManager uiManager;
     public ScoreManager scoreManager;
-    public Parallax parallax;
 
     [Space(10)]
 
@@ -45,7 +44,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(3.0f);
 
         uiManager.viewGameUI.SetActive(false);
+
         uiManager.viewGameOver.SetActive(true);
+        uiManager.UITween.EndScreen();
 
         yield return null;
     }

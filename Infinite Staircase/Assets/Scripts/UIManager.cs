@@ -27,11 +27,15 @@ public class UIManager : MonoBehaviour
     private ScoreManager GM_ScoreManager;
     private Player GM_Player;
 
+    public UITween UITween { get; private set; }
+
     //
-    private void Start()
+    private void Awake()
     {
         GM_ScoreManager = gameManager.scoreManager;
         GM_Player = gameManager.player;
+
+        UITween = GetComponent<UITween>();
     }
 
     // Update is called once per frame
