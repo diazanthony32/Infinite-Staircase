@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
 
     private LevelGenerator GM_LevelGenerator;
     private CinemachineVirtualCamera GM_VCamera;
+    private ScoreManager GM_ScoreManager;
 
     // Start is called before the first frame update
     void Awake()
@@ -33,6 +34,7 @@ public class Player : MonoBehaviour
 
         GM_LevelGenerator = gameManager.levelGenerator;
         GM_VCamera = gameManager.VCamera;
+        GM_ScoreManager = gameManager.scoreManager;
     }
 
     // Update is called once per frame
@@ -54,6 +56,8 @@ public class Player : MonoBehaviour
     {
         MovePlayer();
         CheckForPlatform();
+        UpdateGracePeriod();
+        GM_ScoreManager.UpdateScore();
     }
 
     //
@@ -63,6 +67,8 @@ public class Player : MonoBehaviour
         FlipPlayer();
         MovePlayer();
         CheckForPlatform();
+        UpdateGracePeriod();
+        GM_ScoreManager.UpdateScore();
     }
 
     //
