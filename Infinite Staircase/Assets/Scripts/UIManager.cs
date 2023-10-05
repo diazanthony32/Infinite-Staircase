@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -46,6 +47,11 @@ public class UIManager : MonoBehaviour
 
         highScoreText.text = GM_ScoreManager.HighScore.ToString();
         finalScoreText.text = GM_ScoreManager.CurrentScore.ToString();
+    }
+
+    public void LoadScene(string scene)
+    {
+        SceneManager.LoadScene(scene);
     }
 
 }

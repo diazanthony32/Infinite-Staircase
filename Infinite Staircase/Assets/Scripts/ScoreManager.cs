@@ -24,7 +24,7 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     public void UpdateScore()
     {
-        if (GM_Player.IsGrounded)
+        if (GM_Player.IsGrounded && !GM_Player.IsDead)
         {
             CurrentScore += 1;
         }

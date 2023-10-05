@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     public float GracePeriodTimer { get; private set; } = float.PositiveInfinity;
 
     public bool IsGrounded { get; private set; } = true;
+    public bool IsDead { get; private set; } = false;
 
     private LevelGenerator GM_LevelGenerator;
     private CinemachineVirtualCamera GM_VCamera;
@@ -40,9 +41,11 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GracePeriodTimer < 0.0f || !IsGrounded)
+        // if the player is dead, dont do anything extra
+        if (IsDead) return;
+
+        if ((GracePeriodTimer < 0.0f || !IsGrounded))
         {
-            GM_VCamera.Follow = null;
             StartCoroutine(Die());
         }
         else
@@ -126,9 +129,11 @@ public class Player : MonoBehaviour
     {
         playerAnimator.SetTrigger("Die");
 
-        IsGrounded = false;
+        GM_VCamera.Follow = null;
+        IsDead = true;
 
         yield return new WaitForSeconds(1.5f);
+
         PlayerRB.bodyType = RigidbodyType2D.Dynamic;
     }
 }

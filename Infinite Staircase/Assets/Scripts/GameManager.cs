@@ -17,10 +17,11 @@ public class GameManager : MonoBehaviour
 
     public CinemachineVirtualCamera VCamera;
 
-
     [Space(10)]
 
     public Player player;
+
+    private bool isGameOver = false;
 
     // Start is called before the first frame update
     void Start()
@@ -31,13 +32,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!player.IsGrounded)
+        if (player.IsDead && !isGameOver)
             StartCoroutine(GameOver());
     }
 
     // On player "death", this coroutine gets enabled
     IEnumerator GameOver()
     {
+        // makes sure this runs only once
+        isGameOver = true;
+
         // disable player input
         uiManager.viewPlayerInput.SetActive(false);
 
@@ -47,7 +51,5 @@ public class GameManager : MonoBehaviour
 
         uiManager.viewGameOver.SetActive(true);
         uiManager.UITween.EndScreen();
-
-        yield return null;
     }
 }

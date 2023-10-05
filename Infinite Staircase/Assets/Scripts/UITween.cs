@@ -20,15 +20,10 @@ public class UITween : MonoBehaviour
     //
     public void EndScreen()
     {
-        LeanTween.scale(gameOverText, new Vector3(1.0f, 1.0f, 1.0f), 1.5f).setEase(LeanTweenType.easeOutCirc);
-        LeanTween.moveLocal(gameOverText, new Vector3(0.0f, 625.0f, 0.0f), 0.75f).setDelay(1.75f).setEase(LeanTweenType.easeInOutCubic);
+        LeanTween.scale(gameOverText, new Vector3(1.0f, 1.0f, 1.0f), 1.0f).setEase(LeanTweenType.easeOutCirc);
+        LeanTween.moveLocal(gameOverText, new Vector3(0.0f, 625.0f, 0.0f), 0.75f).setDelay(1.5f).setEase(LeanTweenType.easeInOutBack);
         
-        LeanTween.scale(gameOverBox, new Vector3(1.0f, 1.0f, 1.0f), 1.5f).setDelay(2.75f).setEase(LeanTweenType.easeOutCirc);
-    }
-
-    public void LoadScene(string scene)
-    {
-        SceneManager.LoadScene(scene);
+        LeanTween.scale(gameOverBox, new Vector3(1.0f, 1.0f, 1.0f), 0.75f).setDelay(2.25f).setEase(LeanTweenType.easeOutBack);
     }
 
 }

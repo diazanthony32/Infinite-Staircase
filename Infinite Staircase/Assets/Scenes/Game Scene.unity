@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b394b48773b684782b00d99e78c6528c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 298896577}
+  GM_VCamera: {fileID: 2036210199}
   loopX: 1
   parallaxEffectX: 0.6
   autoScrollX: 1
@@ -398,8 +398,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 81534414}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 81534413}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 5
         m_Arguments:
@@ -1077,8 +1077,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 81534414}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 81534413}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 5
         m_Arguments:
@@ -3139,7 +3139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b394b48773b684782b00d99e78c6528c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 298896577}
+  GM_VCamera: {fileID: 2036210199}
   loopX: 0
   parallaxEffectX: 0
   autoScrollX: 0
@@ -3894,7 +3894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b394b48773b684782b00d99e78c6528c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 298896577}
+  GM_VCamera: {fileID: 2036210199}
   loopX: 0
   parallaxEffectX: 0.2
   autoScrollX: 0
@@ -4294,7 +4294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b394b48773b684782b00d99e78c6528c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 298896577}
+  GM_VCamera: {fileID: 2036210199}
   loopX: 1
   parallaxEffectX: 0.8
   autoScrollX: 1
@@ -5155,7 +5155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 298896577}
   seed: 420
-  useSeed: 1
+  useSeed: 0
   platformTypes:
   - {fileID: 4519674642326094967, guid: b7afc37e7848b431c8f9a8109b3f7a37, type: 3}
 --- !u!1 &1840200496
@@ -5498,7 +5498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b394b48773b684782b00d99e78c6528c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 298896577}
+  GM_VCamera: {fileID: 2036210199}
   loopX: 0
   parallaxEffectX: 0.4
   autoScrollX: 0

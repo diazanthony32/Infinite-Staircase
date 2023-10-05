@@ -6,7 +6,8 @@ using UnityEngine.UIElements;
 
 public class Parallax : MonoBehaviour
 {
-    public GameManager gameManager;
+    public CinemachineVirtualCamera GM_VCamera;
+
     public enum scrollDirectionX { Left, Right };
 
     [Header("Horizontal Settings")]
@@ -31,7 +32,6 @@ public class Parallax : MonoBehaviour
     float boundsX;
     float startPosY;
     float boundsY;
-    CinemachineVirtualCamera GM_VCamera;
 
     //
     private void Awake()
@@ -41,7 +41,6 @@ public class Parallax : MonoBehaviour
 
         boundsX = GetComponentInChildren<Renderer>().bounds.size.x;
         boundsY = GetComponentInChildren<Renderer>().bounds.size.y;
-        GM_VCamera = gameManager.VCamera;
     }
 
     //
