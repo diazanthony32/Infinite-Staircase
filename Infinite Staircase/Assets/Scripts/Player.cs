@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     private ScoreManager GM_ScoreManager;
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         playerSprite = GetComponentInChildren<SpriteRenderer>();
         PlayerRB = GetComponentInChildren<Rigidbody2D>();

@@ -29,7 +29,7 @@ public class LevelGenerator : MonoBehaviour
     public List<GameObject> ActivePlatforms { get; private set; } = new List<GameObject>();
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         SetPlacementDistances();
         DetermineSeededGeneration();

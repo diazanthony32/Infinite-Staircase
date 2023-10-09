@@ -34,7 +34,7 @@ public class Parallax : MonoBehaviour
     float boundsY;
 
     //
-    private void Awake()
+    private void Start()
     {
         startPosX = transform.position.x;
         startPosY = transform.position.y;

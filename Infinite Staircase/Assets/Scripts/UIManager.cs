@@ -31,7 +31,7 @@ public class UIManager : MonoBehaviour
     public UITween UITween { get; private set; }
 
     //
-    private void Awake()
+    private void Start()
     {
         GM_ScoreManager = gameManager.scoreManager;
         GM_Player = gameManager.player;
