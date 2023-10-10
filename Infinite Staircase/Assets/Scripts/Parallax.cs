@@ -8,25 +8,25 @@ public class Parallax : MonoBehaviour
 {
     public CinemachineVirtualCamera GM_VCamera;
 
-    public enum scrollDirectionX { Left, Right };
+    public enum ScrollDirectionX { Left, Right };
 
     [Header("Horizontal Settings")]
 
     public bool loopX;
     public float parallaxEffectX;
     public bool autoScrollX;
-    public scrollDirectionX scrollDirectionXaxis;
     public float scollSpeedX;
+    public ScrollDirectionX scrollDirectionXaxis;
 
-    public enum scrollDirectionY { Down, Up };
+    public enum ScrollDirectionY { Down, Up };
     
     [Header("Vertical Settings")]
     
     public bool loopY;
     public float parallaxEffectY;
     public bool autoScrollY;
-    public scrollDirectionY scrollDirectionYaxis;
     public float scollSpeedY;
+    public ScrollDirectionY scrollDirectionYaxis;
 
     float startPosX;
     float boundsX;
@@ -46,54 +46,84 @@ public class Parallax : MonoBehaviour
     //
     void Update()
     {
-        float tempX = GM_VCamera.transform.position.x * (1 - parallaxEffectX);
+        Vector2 desiredPositon;
+
+        if (autoScrollX || autoScrollY)
+        {
+            desiredPositon = AutoScroll();
+        }
+        else
+        {
+            desiredPositon = ParallaxFX();
+        }
+
+        transform.position = desiredPositon;
+
+        if(loopX || loopY)
+        {
+            Loop();
+        }
+    }
+
+    // 
+    Vector2 ParallaxFX()
+    {
         float distanceX = (GM_VCamera.transform.position.x * parallaxEffectX);
         float desiredXPos = startPosX + distanceX;
 
-        float tempY = GM_VCamera.transform.position.y * (1 - parallaxEffectY);
         float distanceY = (GM_VCamera.transform.position.y * parallaxEffectY);
         float desiredYPos = startPosY + distanceY;
 
+        return new Vector2(desiredXPos, desiredYPos);
+    }
+
+    // 
+    Vector2 AutoScroll()
+    {
+        float desiredXPos = transform.position.x;
+        float desiredYPos = transform.position.y;
+
         if (autoScrollX)
         {
-            // this will push the object to the left
-            desiredXPos = transform.position.x + (scrollDirectionXaxis == scrollDirectionX.Left ? -1 : 1) * scollSpeedX;
+            desiredXPos += ((scrollDirectionXaxis == ScrollDirectionX.Left ? -1 : 1) * scollSpeedX * Time.deltaTime);
         }
 
         if (autoScrollY)
         {
-            // this will push the object down
-            desiredYPos = transform.position.y + (scrollDirectionYaxis == scrollDirectionY.Down ? -1 : 1) * scollSpeedY;
+            desiredYPos += ((scrollDirectionYaxis == ScrollDirectionY.Down ? -1 : 1) * scollSpeedY * Time.deltaTime);
         }
 
-        transform.position = new Vector2(desiredXPos, desiredYPos);
+        return new Vector2(desiredXPos, desiredYPos);
+    }
+
+    //
+    void Loop()
+    {
+        float tempX = GM_VCamera.transform.position.x;
+        float tempY = GM_VCamera.transform.position.y;
 
         // used for looping the item
         if (loopX)
         {
-            if (tempX > transform.position.x + boundsX)
+            if (transform.position.x + boundsX < tempX)
             {
-                startPosX += boundsX;
-                transform.position = new Vector3(transform.position.x + boundsX, transform.position.y, 0);
+                transform.position = new Vector2(transform.position.x + boundsX, transform.position.y);
             }
-            else if (tempX < transform.position.x - boundsX)
+            else if (transform.position.x - boundsX > tempX)
             {
-                startPosX -= boundsX;
-                transform.position = new Vector3(transform.position.x + boundsX, transform.position.y, 0);
+                transform.position = new Vector2(transform.position.x - boundsX, transform.position.y);
             }
         }
 
         if (loopY)
         {
-            if (tempY > transform.position.y + boundsY)
+            if (transform.position.y + boundsY < tempY)
             {
-                startPosY += boundsY;
-                transform.position = new Vector3(transform.position.x, transform.position.y + boundsY, 0);
+                transform.position = new Vector2(transform.position.x, transform.position.y + boundsY);
             }
-            else if (tempY < transform.position.y - boundsY)
+            else if (transform.position.y - boundsY > tempY)
             {
-                startPosY -= boundsY;
-                transform.position = new Vector3(transform.position.x, transform.position.y - boundsY, 0);
+                transform.position = new Vector2(transform.position.x, transform.position.y - boundsY);
             }
         }
     }
